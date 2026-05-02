@@ -188,14 +188,14 @@ func (m *RemoveModel) View() string {
 		body.WriteString("\n\n")
 	} else {
 		body.WriteString(shared.FocusedLabelStyle.Render("  Select Removal Mode:") + "\n")
-		
+
 		safeIndicator := "(*) "
 		forceIndicator := "( ) "
 		if m.isForce {
 			safeIndicator = "( ) "
 			forceIndicator = "(*) "
 		}
-		
+
 		fmt.Fprintf(&body, "  %sSafe Remove (Token required)\n", safeIndicator)
 		fmt.Fprintf(&body, "  %s", forceIndicator)
 		if m.isForce {
