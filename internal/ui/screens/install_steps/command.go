@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"github-actions-manager/internal/ui/shared"
 	"os/exec"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func RunCommandStep(commandString string, directory string, stepName string) tea.Cmd {
-	pauseMsg := fmt.Sprintf("Error occurred during %s. Press ENTER to continue...", stepName)
-	wrappedCommand := shared.WrapWithPauseOnError(commandString, pauseMsg)
+	successMsg := fmt.Sprintf("%s completed. Press ENTER to continue...", stepName)
+	errorMsg := fmt.Sprintf("Error occurred during %s. Press ENTER to continue...", stepName)
+	title := fmt.Sprintf("RUNNING %s", strings.ToUpper(stepName))
+	wrappedCommand := shared.WrapCommand(title, commandString, successMsg, errorMsg, true, true)
 
 	command := exec.Command("/bin/sh", "-c", wrappedCommand)
 	command.Dir = directory

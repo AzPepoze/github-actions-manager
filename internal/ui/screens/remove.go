@@ -155,16 +155,15 @@ cd ..
 sudo rm -rf "$TARGET_DIR"
 `, removeCmd, m.runner.InstallPath)
 
-	wrapped := shared.WrapWithPause(script, "Press ENTER to return to Dashboard...")
+	successMsg := "Runner removed successfully. Press ENTER to return to Dashboard..."
+	errorMsg := "Error removing runner. Press ENTER to return to Dashboard..."
+	wrapped := shared.WrapCommand("RUNNING REMOVAL", script, successMsg, errorMsg, true, true)
 
 	c := exec.Command("/bin/sh", "-c", wrapped)
 	c.Dir = m.runner.InstallPath
 
 	return tea.ExecProcess(c, func(err error) tea.Msg {
-		if err != nil {
-			return shared.ErrMsg{Err: err}
-		}
-		return shared.ConfigDoneMsg{}
+		return shared.StatusRefreshMsg{FromTask: true}
 	})
 }
 

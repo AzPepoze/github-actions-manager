@@ -109,7 +109,11 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "n":
 			return m, func() tea.Msg {
-				return shared.NavigateToMsg{Screen: shared.ScreenSetupURL}
+				screen := shared.ScreenSetupURL
+				if shared.HasRunnerArchive() {
+					screen = shared.ScreenSetupConfig
+				}
+				return shared.NavigateToMsg{Screen: screen}
 			}
 		case "q":
 			return m, tea.Quit

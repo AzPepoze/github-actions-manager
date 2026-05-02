@@ -135,14 +135,13 @@ func (m *SetupConfigModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.session.InstallPath, m.session.InstallPath, m.session.InstallPath, m.inputs[inputConfig].Value(),
 				)
 
-				wrappedScript := shared.WrapWithPauseOnError(script, "Installation steps completed. Press ENTER to return to Dashboard...")
+				successMsg := "Installation completed."
+				errorMsg := "Error installing runner. Press ENTER to return to Dashboard..."
+				wrappedScript := shared.WrapCommand("RUNNING INSTALLATION", script, successMsg, errorMsg, false, true)
 				c := exec.Command("/bin/sh", "-c", wrappedScript)
 				c.Dir = "."
 
 				return m, tea.ExecProcess(c, func(err error) tea.Msg {
-					if err != nil {
-						return shared.ErrMsg{Err: err}
-					}
 					return shared.StatusRefreshMsg{FromTask: true}
 				})
 			}

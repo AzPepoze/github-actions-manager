@@ -6,7 +6,6 @@ import (
 	"github-actions-manager/internal/ui/components"
 	"github-actions-manager/internal/ui/screens"
 	"github-actions-manager/internal/ui/shared"
-	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -37,7 +36,7 @@ func NewRootModel(store *core.Store) *RootModel {
 
 	if len(store.Runners) > 0 {
 		m.screen = shared.ScreenDashboard
-	} else if hasRunnerArchive() {
+	} else if shared.HasRunnerArchive() {
 		m.screen = shared.ScreenSetupConfig
 	} else {
 		m.screen = shared.ScreenSetupURL
@@ -112,9 +111,4 @@ func (m *RootModel) View() string {
 		return activeModel.View()
 	}
 	return "Error: Unknown screen"
-}
-
-func hasRunnerArchive() bool {
-	_, err := os.Stat("actions-runner.tar.gz")
-	return err == nil
 }
