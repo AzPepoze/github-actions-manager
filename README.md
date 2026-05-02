@@ -1,60 +1,54 @@
 # GitHub Actions Manager
 
-A premium Terminal User Interface (TUI) for managing self-hosted GitHub Actions runners on Linux. Built with Go and the Bubble Tea framework, this tool provides a streamlined experience for installing, configuring, and managing the lifecycle of your runners.
+Terminal User Interface (TUI) for managing github actions runners on linux.
 
-## Key Features
+## Table of Contents
 
-- **Effortless Installation**: Interactive flow to download and configure runners with live progress tracking.
-- **Service Management**: Easily install, start, stop, and uninstall runners as systemd services.
-- **Robust Removal**: Choose between standard removal (token-based) or Force Mode for deep cleanup.
-- **Premium UI/UX**: Beautiful, modular TUI design with smooth transitions and intelligent navigation.
-- **Developer Friendly**: Highly modular architecture (MVU pattern), zero duplicate logic, and fully linted codebase.
+- [Quick Start](#quick-start)
+- [Screenshots](#screenshots)
+- [Prerequisites](#prerequisites)
+- [Development](#development)
 
 ## Quick Start
+
+To download the latest release and run it directly:
+
+```bash
+curl -L https://github.com/AzPepoze/github-actions-manager/releases/latest/download/github-actions-manager -o github-actions-manager
+chmod +x github-actions-manager
+./github-actions-manager
+```
+
+## Screenshots
+
+### Dashboard
+![Dashboard](./docs/dashboard.png)
+
+### Download Runner
+![Download Runner](./docs/download-runner.png)
+
+### Config Runner
+![Config Runner](./docs/config-runner.png)
+
+## Prerequisites
+
+- Linux environment (required for runner services)
+- Root/sudo access (for managing systemd services)
+
+## Development
+
+If you want to build from source:
 
 ### Prerequisites
 
 - Go 1.21 or later
-- golangci-lint (optional, for development)
-- Linux environment (required for runner services)
+- golangci-lint (optional)
 
-### Installation
-
-Clone the repository and build the binary:
+### Build Instructions
 
 ```bash
 git clone https://github.com/AzPepoze/github-actions-manager.git
 cd github-actions-manager
 make build
+./bin/github-actions-manager
 ```
-
-The binary will be available at ./bin/github-actions-manager.
-
-### Usage
-
-Run the manager:
-
-```bash
-make start
-```
-
-## Development
-
-This project uses a modern Go stack:
-- **Framework**: Bubble Tea (MVU architecture)
-- **Styling**: Lip Gloss
-- **Components**: Bubbles
-
-### Makefile Commands
-
-- `make build`: Compiles the binary to ./bin.
-- `make start`: Builds and runs the application.
-- `make lint`: Runs golangci-lint for code quality checks.
-- `make clean`: Removes build artifacts.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-Built by AzPepoze
