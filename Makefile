@@ -1,16 +1,17 @@
-BINARY_NAME=actions-manager
+BINARY_NAME=github-actions-manager
 
-.PHONY: build start clean
+.PHONY: build start clean lint
 
 build:
 	@go build -o bin/$(BINARY_NAME) cmd/manager/main.go
 	@chmod +x bin/$(BINARY_NAME)
-	@echo "Build success!!"
 
 start: build
-	@./bin/$(BINARY_NAME)
+	@cd bin && ./$(BINARY_NAME) && cd ..
 
 clean:
 	@rm -rf bin/
 	@go clean
-	@echo "Clean success!!"
+
+lint:
+	@golangci-lint run ./...

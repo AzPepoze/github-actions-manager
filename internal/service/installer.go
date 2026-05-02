@@ -1,4 +1,4 @@
-package ops
+package service
 
 import (
 	"fmt"
@@ -14,11 +14,21 @@ type DownloadProgress struct {
 }
 
 func DownloadRunner(url string, destination string, progress chan<- DownloadProgress) error {
+	if _, err := os.Stat(destination); err == nil {
+		if progress != nil {
+			close(progress)
+		}
+		return nil
+	}
+
 	response, err := http.Get(url)
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
+	if progress != nil {
+		defer close(progress)
+	}
 
 	if response.StatusCode != http.StatusOK {
 		return fmt.Errorf("failed to download runner: %s", response.Status)
@@ -28,7 +38,7 @@ func DownloadRunner(url string, destination string, progress chan<- DownloadProg
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	totalSize := response.ContentLength
 	var downloadedSize int64

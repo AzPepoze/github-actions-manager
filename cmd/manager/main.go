@@ -1,29 +1,43 @@
 package main
 
 import (
-	"actions-manager/internal/runner"
-	"actions-manager/internal/ui"
 	"fmt"
+	"github-actions-manager/internal/core"
+	"github-actions-manager/internal/service"
+	"github-actions-manager/internal/ui"
 	"os"
+	"os/exec"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
+	_ = exec.Command("sudo", "-v").Run()
+
 	// Initialize runner store
-	store, err := runner.NewStore("runners.json")
+	store := core.NewStore()
+	runners, err := service.DiscoverRunners("actions")
 	if err != nil {
-		fmt.Printf("Error initializing store: %v\n", err)
+		fmt.Printf("Error discovering runners: %v\n", err)
 		os.Exit(1)
 	}
+	store.SetRunners(runners)
 
 	// Create root model
 	model := ui.NewRootModel(store)
 
 	// Run the program
 	program := tea.NewProgram(model, tea.WithAltScreen())
-	if _, err := program.Run(); err != nil {
+	model.SetProgram(program)
+	
+	m, err := program.Run()
+	if err != nil {
 		fmt.Printf("Error running program: %v\n", err)
+		os.Exit(1)
+	}
+
+	finalModel := m.(*ui.RootModel)
+	if finalModel.Err != nil {
 		os.Exit(1)
 	}
 }
