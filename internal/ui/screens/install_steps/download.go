@@ -13,7 +13,7 @@ func DownloadStep(archiveURL string, progressChan chan service.DownloadProgress)
 		if err := service.DownloadRunner(archiveURL, archivePath, progressChan); err != nil {
 			return shared.ErrMsg{Err: err}
 		}
-		return nil
+		return shared.DoneMsg{Path: archivePath}
 	}
 }
 
@@ -21,7 +21,7 @@ func WaitForProgress(progressChan chan service.DownloadProgress) tea.Cmd {
 	return func() tea.Msg {
 		progress, ok := <-progressChan
 		if !ok {
-			return shared.StatusMsg("Download complete. Extracting...")
+			return shared.StatusMsg("Download complete.")
 		}
 		return shared.ProgressMsg(progress)
 	}

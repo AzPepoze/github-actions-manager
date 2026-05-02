@@ -1,8 +1,10 @@
 package screens
 
 import (
+	"fmt"
 	"github-actions-manager/internal/service"
 	"github-actions-manager/internal/ui/shared"
+	"os/exec"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -125,9 +127,24 @@ func (m *SetupConfigModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.inputs[inputConfig].Value() != "" && m.inputs[inputName].Value() != "" {
 				m.session.ConfigCmd = m.inputs[inputConfig].Value()
 				m.session.RunnerName = m.inputs[inputName].Value()
-				return m, func() tea.Msg {
-					return shared.NavigateToMsg{Screen: shared.ScreenInstaller}
-				}
+
+				m.session.InstallPath = fmt.Sprintf("./actions/%s", m.session.RunnerName)
+
+				script := fmt.Sprintf(
+					"mkdir -p %s && tar xzf actions-runner.tar.gz -C %s && cd %s && %s && sudo ./svc.sh install && sudo ./svc.sh start",
+					m.session.InstallPath, m.session.InstallPath, m.session.InstallPath, m.inputs[inputConfig].Value(),
+				)
+
+				wrappedScript := shared.WrapWithPauseOnError(script, "Installation steps completed. Press ENTER to return to Dashboard...")
+				c := exec.Command("/bin/sh", "-c", wrappedScript)
+				c.Dir = "."
+
+				return m, tea.ExecProcess(c, func(err error) tea.Msg {
+					if err != nil {
+						return shared.ErrMsg{Err: err}
+					}
+					return shared.StatusRefreshMsg{FromTask: true}
+				})
 			}
 		}
 	}
@@ -137,7 +154,6 @@ func (m *SetupConfigModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
 	}
 
-	// Live parse config to auto-fill name
 	if m.inputs[inputConfig].Value() != "" {
 		if parsed, _ := service.ParseConfig(m.inputs[inputConfig].Value()); parsed != nil {
 			m.session.ConfigURL = parsed.URL

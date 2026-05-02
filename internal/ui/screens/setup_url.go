@@ -73,14 +73,13 @@ func (m *SetupURLModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		if msg.String() == "enter" && m.isParsed {
 			return m, func() tea.Msg {
-				return shared.NavigateToMsg{Screen: shared.ScreenSetupConfig}
+				return shared.NavigateToMsg{Screen: shared.ScreenInstaller}
 			}
 		}
 	}
 
 	m.urlInput, cmd = m.urlInput.Update(msg)
 
-	// Live parse the input
 	if m.urlInput.Value() != "" {
 		if parsed, _ := service.ParseCurl(m.urlInput.Value()); parsed != nil {
 			m.session.ArchiveURL = parsed.URL

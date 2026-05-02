@@ -136,10 +136,6 @@ func (m *RemoveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *RemoveModel) runRemoveFlow() tea.Cmd {
 	m.status = "Running removal and cleanup script..."
 
-	// We use a single robust script to handle:
-	// 1. Service stopping/uninstallation (only if svc.sh exists)
-	// 2. Runner unconfiguration (config.sh remove) - Skip if isForce is enabled
-	// 3. Final directory cleanup
 	removeCmd := "./config.sh remove"
 	if m.isForce {
 		removeCmd = "echo '> Force removal: skipping runner unconfiguration (token remove)'"

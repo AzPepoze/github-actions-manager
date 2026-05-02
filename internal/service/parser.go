@@ -50,7 +50,6 @@ func ParseConfig(command string) (*ParsedConfig, error) {
 	url := urlMatches[1]
 	token := tokenMatches[1]
 
-	// Extract project name from URL (e.g. github.com/user/repo -> repo)
 	parts := strings.Split(strings.TrimRight(url, "/"), "/")
 	projectName := parts[len(parts)-1]
 

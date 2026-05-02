@@ -47,6 +47,5 @@ func GetServiceStatus(installPath string) (installed bool, running bool, err err
 		return false, false, nil
 	}
 
-	// Fallback check if it's installed but status is ambiguous
 	return strings.Contains(output, "status"), false, nil
 }

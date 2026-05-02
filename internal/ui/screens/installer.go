@@ -34,9 +34,9 @@ func NewInstallerModel(store *core.Store, session *shared.Session) *InstallerMod
 func (m *InstallerModel) Init() tea.Cmd {
 	m.status = "Starting download..."
 	m.percent = 0
-	
+
 	m.progressChan = make(chan service.DownloadProgress, 20)
-	
+
 	return tea.Batch(
 		install_steps.DownloadStep(m.session.ArchiveURL, m.progressChan),
 		install_steps.WaitForProgress(m.progressChan),
@@ -53,26 +53,14 @@ func (m *InstallerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case shared.StatusMsg:
 		m.status = string(msg)
-		if strings.Contains(m.status, "Extracting") {
-			m.percent = 0.5
-			return m, install_steps.ExtractStep(m.session.RunnerName, "actions-runner.tar.gz")
-		}
 		return m, nil
 
 	case shared.DoneMsg:
-		m.session.InstallPath = msg.Path
-		m.status = "Starting configuration..."
-		m.percent = 0.8
-		return m, install_steps.RunCommandStep(m.session.ConfigCmd, m.session.InstallPath, "config")
-
-	case shared.ConfigDoneMsg:
-		m.status = "Configuration finished. Installing service..."
-		m.percent = 0.9
-		return m, install_steps.RunCommandStep("sudo ./svc.sh install", m.session.InstallPath, "install")
-
-	case shared.InstallDoneMsg:
-		m.status = "Service installed. Starting..."
-		return m, install_steps.RunCommandStep("sudo ./svc.sh start", m.session.InstallPath, "start")
+		m.status = "Download finished. Ready for configuration."
+		m.percent = 1.0
+		return m, func() tea.Msg {
+			return shared.NavigateToMsg{Screen: shared.ScreenSetupConfig}
+		}
 
 	case shared.ErrMsg:
 		m.err = msg.Err

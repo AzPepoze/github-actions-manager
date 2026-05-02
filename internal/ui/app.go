@@ -60,19 +60,16 @@ func (m *RootModel) Init() tea.Cmd {
 func (m *RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
-	// Global key handling
 	if keyMsg, ok := msg.(tea.KeyMsg); ok {
 		if keyMsg.String() == "ctrl+c" {
 			return m, tea.Quit
 		}
 	}
 
-	// Handle navigation and global events
 	switch msg := msg.(type) {
 	case shared.NavigateToMsg:
 		m.screen = msg.Screen
 		return m, m.screens[m.screen].Init()
-
 
 	case screens.StartRemoveMsg:
 		m.screen = shared.ScreenRemove
@@ -98,10 +95,9 @@ func (m *RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case shared.ErrMsg:
 		m.Err = msg.Err
-		// Don't return, let the active screen also process the error
+
 	}
 
-	// Update active screen
 	if activeModel, ok := m.screens[m.screen]; ok {
 		var cmd tea.Cmd
 		m.screens[m.screen], cmd = activeModel.Update(msg)
@@ -110,7 +106,6 @@ func (m *RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	return m, tea.Batch(cmds...)
 }
-
 
 func (m *RootModel) View() string {
 	if activeModel, ok := m.screens[m.screen]; ok {

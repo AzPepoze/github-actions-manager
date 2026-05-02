@@ -16,7 +16,6 @@ type runnerConfig struct {
 func DiscoverRunners(basePath string) ([]core.Runner, error) {
 	var runners []core.Runner
 
-	// Check if actions directory exists
 	if _, err := os.Stat(basePath); os.IsNotExist(err) {
 		return runners, nil
 	}
@@ -40,7 +39,6 @@ func DiscoverRunners(basePath string) ([]core.Runner, error) {
 				continue
 			}
 
-			// Clean UTF-8 BOM if present
 			data = removeBOM(data)
 
 			var config runnerConfig
@@ -48,7 +46,6 @@ func DiscoverRunners(basePath string) ([]core.Runner, error) {
 				continue
 			}
 
-			// Extract project name from URL (e.g. github.com/user/repo -> repo)
 			parts := strings.Split(strings.TrimRight(config.GitHubURL, "/"), "/")
 			projectName := parts[len(parts)-1]
 
@@ -58,7 +55,7 @@ func DiscoverRunners(basePath string) ([]core.Runner, error) {
 				ProjectURL:  config.GitHubURL,
 				InstallPath: installPath,
 				Status:      core.StatusStopped,
-				IsInstalled: false, // Will be updated by dashboard status check
+				IsInstalled: false,
 			})
 		}
 	}

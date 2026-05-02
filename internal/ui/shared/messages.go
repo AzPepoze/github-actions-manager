@@ -17,8 +17,6 @@ const (
 	ScreenRemove
 )
 
-// Messages
-
 type StatusRefreshMsg struct {
 	Index     int
 	Installed bool

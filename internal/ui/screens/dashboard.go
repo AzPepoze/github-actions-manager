@@ -224,13 +224,12 @@ func (m *DashboardModel) View() string {
 	if len(m.store.Runners) == 0 {
 		body.WriteString("No runners configured yet.\n")
 	} else {
-		// Define column widths
+
 		wStatus := 15
 		wStartup := 12
 		wName := 20
 		wPath := 35
 
-		// Table Header
 		header := lipgloss.JoinHorizontal(lipgloss.Top,
 			m.renderCell("Status", wStatus, shared.HeaderStyle),
 			m.renderCell("Startup", wStartup, shared.HeaderStyle),
@@ -240,7 +239,6 @@ func (m *DashboardModel) View() string {
 		body.WriteString(header + "\n")
 		body.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("#3C3C3C")).Render(strings.Repeat("─", wStatus+wStartup+wName+wPath)) + "\n")
 
-		// Table Rows
 		for i, r := range m.store.Runners {
 			status := shared.ErrorStyle.Render("STOPPED")
 			if r.Status == core.StatusRunning {
