@@ -61,7 +61,7 @@ func NewRemoveModel(store *core.Store) *RemoveModel {
 	ti.Placeholder = "Type project name to confirm"
 	ti.Focus()
 	ti.Prompt = "  > "
-	ti.Width = 40
+	ti.Width = 60
 	ti.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7D56F4"))
 
 	return &RemoveModel{

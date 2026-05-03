@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/truncate"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -219,7 +220,8 @@ type StartRemoveMsg struct {
 }
 
 func (m *DashboardModel) renderCell(content string, width int, style lipgloss.Style) string {
-	return style.Width(width).Render(content)
+	truncated := truncate.StringWithTail(content, uint(width), "...")
+	return style.Width(width).Render(truncated)
 }
 
 func (m *DashboardModel) View() string {
@@ -231,8 +233,8 @@ func (m *DashboardModel) View() string {
 
 		wStatus := 15
 		wStartup := 12
-		wName := 20
-		wPath := 35
+		wName := 30
+		wPath := 45
 
 		header := lipgloss.JoinHorizontal(lipgloss.Top,
 			m.renderCell("Status", wStatus, shared.HeaderStyle),

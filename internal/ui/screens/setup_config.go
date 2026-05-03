@@ -74,7 +74,7 @@ func NewSetupConfigModel(session *shared.Session) *SetupConfigModel {
 
 	name := textinput.New()
 	name.Placeholder = "Runner Name"
-	name.Width = 30
+	name.Width = 60
 	name.Prompt = "  > "
 	name.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7D56F4"))
 	inputs[inputName] = name
