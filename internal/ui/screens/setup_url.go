@@ -9,7 +9,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type SetupURLModel struct {
@@ -50,7 +49,7 @@ func NewSetupURLModel(session *shared.Session) *SetupURLModel {
 	input.Focus()
 	input.Width = 200
 	input.Prompt = "  > "
-	input.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7D56F4"))
+	input.PromptStyle = shared.InputPromptStyle
 
 	return &SetupURLModel{
 		session:  session,

@@ -23,10 +23,12 @@ type InstallerModel struct {
 }
 
 func NewInstallerModel(store *core.Store, session *shared.Session) *InstallerModel {
+	bar := progress.New(progress.WithSolidFill("#A0A0A0"))
+	bar.EmptyColor = "#4A4A4A"
 	return &InstallerModel{
 		store:    store,
 		session:  session,
-		progress: progress.New(progress.WithDefaultGradient()),
+		progress: bar,
 		status:   "Initializing...",
 	}
 }

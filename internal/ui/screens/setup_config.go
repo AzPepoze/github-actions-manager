@@ -11,7 +11,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type SetupConfigModel struct {
@@ -69,14 +68,14 @@ func NewSetupConfigModel(session *shared.Session) *SetupConfigModel {
 	config.Focus()
 	config.Width = 500
 	config.Prompt = "  > "
-	config.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7D56F4"))
+	config.PromptStyle = shared.InputPromptStyle
 	inputs[inputConfig] = config
 
 	name := textinput.New()
 	name.Placeholder = "Runner Name"
 	name.Width = 60
 	name.Prompt = "  > "
-	name.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7D56F4"))
+	name.PromptStyle = shared.InputPromptStyle
 	inputs[inputName] = name
 
 	return &SetupConfigModel{

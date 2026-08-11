@@ -21,6 +21,7 @@ type DashboardModel struct {
 	help   help.Model
 	keys   keyMap
 	cursor int
+	err    string
 }
 
 type keyMap struct {
@@ -29,6 +30,7 @@ type keyMap struct {
 	Start   key.Binding
 	Install key.Binding
 	Remove  key.Binding
+	Open    key.Binding
 	Refresh key.Binding
 	New     key.Binding
 	Quit    key.Binding
@@ -55,6 +57,10 @@ var keys = keyMap{
 		key.WithKeys("x"),
 		key.WithHelp("x", "remove"),
 	),
+	Open: key.NewBinding(
+		key.WithKeys("c"),
+		key.WithHelp("c", "cd/open repo"),
+	),
 	Refresh: key.NewBinding(
 		key.WithKeys("r"),
 		key.WithHelp("r", "refresh"),
@@ -70,13 +76,13 @@ var keys = keyMap{
 }
 
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Up, k.Down, k.Start, k.Install, k.Remove, k.Refresh, k.New, k.Quit}
+	return []key.Binding{k.Up, k.Down, k.Start, k.Install, k.Remove, k.Open, k.Refresh, k.New, k.Quit}
 }
 
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.Up, k.Down, k.Start},
-		{k.Install, k.Refresh, k.New, k.Quit},
+		{k.Install, k.Remove, k.Open, k.Refresh, k.New, k.Quit},
 	}
 }
 
@@ -101,10 +107,12 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "up", "k":
+			m.err = ""
 			if m.cursor > 0 {
 				m.cursor--
 			}
 		case "down", "j":
+			m.err = ""
 			if m.cursor < len(m.store.Runners)-1 {
 				m.cursor++
 			}
@@ -124,10 +132,19 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.toggleInstallCmd()
 		case "x":
 			return m, m.removeRunnerCmd()
+		case "c":
+			m.err = ""
+			return m, m.openRepositoryCmd()
 		case "r":
+			m.err = ""
 			runners, _ := service.DiscoverRunners("actions")
 			m.store.SetRunners(runners)
 			return m, m.Init()
+		}
+
+	case repositoryShellFinishedMsg:
+		if msg.err != nil {
+			m.err = fmt.Sprintf("Unable to open repository shell: %v", msg.err)
 		}
 
 	case shared.StatusRefreshMsg:
@@ -140,6 +157,10 @@ func (m *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+type repositoryShellFinishedMsg struct {
+	err error
 }
 
 func (m *DashboardModel) refreshStatusCmd(index int) tea.Cmd {
@@ -215,6 +236,22 @@ func (m *DashboardModel) removeRunnerCmd() tea.Cmd {
 	}
 }
 
+func (m *DashboardModel) openRepositoryCmd() tea.Cmd {
+	if m.cursor < 0 || m.cursor >= len(m.store.Runners) {
+		return nil
+	}
+
+	cmd, err := service.RepositoryShellCmd(m.store.Runners[m.cursor])
+	if err != nil {
+		m.err = err.Error()
+		return nil
+	}
+
+	return tea.ExecProcess(cmd, func(err error) tea.Msg {
+		return repositoryShellFinishedMsg{err: err}
+	})
+}
+
 type StartRemoveMsg struct {
 	Runner core.Runner
 }
@@ -243,7 +280,7 @@ func (m *DashboardModel) View() string {
 			m.renderCell("Runner Name", wName, shared.HeaderStyle),
 		)
 		body.WriteString(header + "\n")
-		body.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("#3C3C3C")).Render(strings.Repeat("─", wStatus+wStartup+wName+wPath)) + "\n")
+		body.WriteString(shared.DividerStyle.Render(strings.Repeat("─", wStatus+wStartup+wName+wPath)) + "\n")
 
 		for i, r := range m.store.Runners {
 			status := shared.ErrorStyle.Render("STOPPED")
@@ -270,6 +307,10 @@ func (m *DashboardModel) View() string {
 
 			body.WriteString(row + "\n")
 		}
+	}
+
+	if m.err != "" {
+		body.WriteString("\n" + shared.ErrorStyle.Render(m.err) + "\n")
 	}
 
 	return shared.RenderPage("Dashboard", body.String(), m.help.View(m.keys))

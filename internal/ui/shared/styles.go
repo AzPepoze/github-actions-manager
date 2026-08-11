@@ -3,53 +3,54 @@ package shared
 import "github.com/charmbracelet/lipgloss"
 
 var (
+	primaryColor = lipgloss.AdaptiveColor{Light: "#111111", Dark: "#F5F5F5"}
+	mutedColor   = lipgloss.AdaptiveColor{Light: "#6B6B6B", Dark: "#9A9A9A"}
+	dividerColor = lipgloss.AdaptiveColor{Light: "#B8B8B8", Dark: "#4A4A4A"}
+	selectedText = lipgloss.AdaptiveColor{Light: "#FFFFFF", Dark: "#000000"}
+	selectedFill = lipgloss.AdaptiveColor{Light: "#111111", Dark: "#F5F5F5"}
+	successColor = lipgloss.AdaptiveColor{Light: "#18794E", Dark: "#5DDB9B"}
+	errorColor   = lipgloss.AdaptiveColor{Light: "#B42318", Dark: "#FF7B72"}
+)
+
+var (
 	TitleStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("#FAFAFA")).
-			Background(lipgloss.Color("#7D56F4")).
-			Padding(0, 1).
-			MarginBottom(1)
+			Foreground(primaryColor)
 
 	PromptStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#04B575")).
+			Foreground(primaryColor).
 			MarginBottom(1)
 
 	SuccessStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#04B575"))
+			Foreground(successColor)
 
 	ErrorStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#FF0000"))
+			Foreground(errorColor)
 
 	HintStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#626262")).
+			Foreground(mutedColor).
 			MarginTop(1)
 
 	SubPromptStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#888888")).
+			Foreground(mutedColor).
 			Italic(true).
 			MarginBottom(1)
 
 	CodeStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#FFD700")).
-			Background(lipgloss.Color("#222222")).
-			Padding(0, 1)
+			Foreground(primaryColor)
 
 	LogStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#888888")).
-			Background(lipgloss.Color("#222222")).
-			Padding(0, 1)
+			Foreground(mutedColor)
 
 	ContainerStyle = lipgloss.NewStyle().
-			Padding(1, 2).
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#7D56F4"))
+			Padding(1, 2)
 
 	TableStyle = lipgloss.NewStyle().
 			Border(lipgloss.NormalBorder(), false, false, true, false).
-			BorderForeground(lipgloss.Color("#3C3C3C"))
+			BorderForeground(dividerColor)
 
 	HeaderStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#EEEEEE")).
+			Foreground(primaryColor).
 			Bold(true).
 			Padding(0, 1)
 
@@ -58,7 +59,12 @@ var (
 
 	SelectedRowStyle = lipgloss.NewStyle().
 				Bold(true).
-				Foreground(lipgloss.Color("#FAFAFA")).
-				Background(lipgloss.Color("#7D56F4")).
+				Foreground(selectedText).
+				Background(selectedFill).
 				Padding(0, 1)
+
+	InputPromptStyle  = lipgloss.NewStyle().Foreground(primaryColor)
+	DividerStyle      = lipgloss.NewStyle().Foreground(dividerColor)
+	LabelStyle        = lipgloss.NewStyle().Foreground(mutedColor)
+	FocusedLabelStyle = lipgloss.NewStyle().Foreground(primaryColor).Bold(true)
 )

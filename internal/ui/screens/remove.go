@@ -12,7 +12,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type RemoveModel struct {
@@ -62,7 +61,7 @@ func NewRemoveModel(store *core.Store) *RemoveModel {
 	ti.Focus()
 	ti.Prompt = "  > "
 	ti.Width = 60
-	ti.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7D56F4"))
+	ti.PromptStyle = shared.InputPromptStyle
 
 	return &RemoveModel{
 		store:     store,
